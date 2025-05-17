@@ -2,30 +2,36 @@ import streamlit as st
 import pandas as pd
 from huggingface_hub import hf_hub_download
 
-st.title("Простой просмотр отзывов Amazon")
+st.set_page_config(page_title="Проверка загрузки данных", layout="centered")
 
-@st.cache_data
-def load_data():
+st.title("🔍 Проверка загрузки Amazon Reviews")
+
+# Отладочные сообщения
+st.text("🚀 Начинаем загрузку...")
+
+@st.cache_data(show_spinner=True)
+def load_sample():
+    st.text("📥 Получаем файл с Hugging Face...")
     token = st.secrets["HF_TOKEN"]
-    path = hf_hub_download(
+    file_path = hf_hub_download(
         repo_id="PbI4a/Case_7",
         filename="clean_reviews.csv",
         repo_type="dataset",
         use_auth_token=token
     )
-    df = pd.read_csv(path)
+    st.text("📖 Загружаем первые 1000 строк...")
+    df = pd.read_csv(file_path, nrows=1000)
     return df
 
-df = load_data()
+try:
+    df = load_sample()
+    st.success("✅ Данные успешно загружены!")
 
-rating_filter = st.multiselect(
-    "Фильтр по рейтингу (звёзды)",
-    options=[1, 2, 3, 4, 5],
-    default=[1, 2, 3, 4, 5]
-)
+    st.write("**Размер датафрейма:**", df.shape)
+    st.write("**Столбцы:**", df.columns.tolist())
+    st.write("**Первые строки:**")
+    st.dataframe(df.head())
 
-df_filtered = df[df['star_rating'].isin(rating_filter)]
-
-st.write(f"Показано отзывов: {len(df_filtered)}")
-
-st.dataframe(df_filtered.head(10))
+except Exception as e:
+    st.error("❌ Ошибка при загрузке данных:")
+    st.exception(e)
