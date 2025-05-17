@@ -30,7 +30,6 @@ def load_data_from_gdrive(file_id):
     file_bytes.seek(0)
 
     df = pd.read_csv(file_bytes)
-    
     # Преобразование даты с обработкой ошибок
     df['review_date'] = pd.to_datetime(df['review_date'], errors='coerce')
     df = df.dropna(subset=['review_date'])
@@ -40,12 +39,11 @@ file_id = "1RN4mmaROL1PDP-9_2rCvROnsVFksTMXc"
 
 try:
     df = load_data_from_gdrive(file_id)
+    st.write("Колонки в датасете:", df.columns.tolist())
+    st.write(df.head())
 except Exception as e:
     st.error(f"Ошибка загрузки данных: {e}")
     st.stop()
-
-# Для проверки: вывод колонок
-st.write("Колонки в датасете:", df.columns.tolist())
 
 st.title("Анализ настроений в отзывах о продуктах")
 
