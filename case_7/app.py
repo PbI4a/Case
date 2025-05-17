@@ -4,12 +4,34 @@ import plotly.express as px
 import requests
 from io import BytesIO
 
-@st.cache_data
+# Функция для получения токена подтверждения скачивания большого файла Google Drive
+def get_confirm_token(response):
+    for key, value in response.cookies.items():
+        if key.startswith('download_warning'):
+            return value
+    return None
+
+# Загрузка данных с Google Drive с обходом страницы подтверждения
+@st.cache_data(show_spinner=True)
 def load_data_from_gdrive(file_id):
-    url = f"https://drive.google.com/uc?export=download&id={file_id}"
-    response = requests.get(url)
-    response.raise_for_status()
-    df = pd.read_csv(BytesIO(response.content))
+    URL = "https://docs.google.com/uc?export=download"
+    session = requests.Session()
+
+    response = session.get(URL, params={'id': file_id}, stream=True)
+    token = get_confirm_token(response)
+
+    if token:
+        params = {'id': file_id, 'confirm': token}
+        response = session.get(URL, params=params, stream=True)
+
+    file_bytes = BytesIO()
+    for chunk in response.iter_content(32768):
+        file_bytes.write(chunk)
+    file_bytes.seek(0)
+
+    df = pd.read_csv(file_bytes)
+    
+    # Преобразование даты с обработкой ошибок
     df['review_date'] = pd.to_datetime(df['review_date'], errors='coerce')
     df = df.dropna(subset=['review_date'])
     return df
@@ -21,6 +43,9 @@ try:
 except Exception as e:
     st.error(f"Ошибка загрузки данных: {e}")
     st.stop()
+
+# Для проверки: вывод колонок
+st.write("Колонки в датасете:", df.columns.tolist())
 
 st.title("Анализ настроений в отзывах о продуктах")
 
