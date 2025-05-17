@@ -1,0 +1,44 @@
+# Streamlit и расширения интерфейса
+streamlit==1.33.0
+streamlit-option-menu==0.3.6
+streamlit-extras==0.3.5
+
+# Основная работа с данными
+pandas==2.2.2
+numpy==1.26.4
+tqdm==4.66.2
+
+# Визуализация
+matplotlib==3.8.4
+seaborn==0.13.2
+plotly==5.21.0
+wordcloud==1.9.3
+altair==5.3.0
+pydeck==0.8.1b0
+
+# Обработка текста
+nltk==3.8.1
+spacy==3.7.2
+regex==2024.4.16
+beautifulsoup4==4.12.3
+
+# Анализ тональности
+textblob==0.17.1
+vaderSentiment==3.3.2
+transformers==4.41.1
+torch==2.3.0
+
+# Машинное обучение
+scikit-learn==1.5.0
+xgboost==2.0.3
+
+# Работа с API и конфигурацией
+requests==2.31.0
+python-dotenv==1.0.1
+
+# Поддержка путей и файлов
+pathlib==1.0.1
+
+# Прочее
+Pillow==10.3.0
+emoji==2.11.0
