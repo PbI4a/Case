@@ -23,7 +23,7 @@ st.markdown("Загрузка и анализ отзывов из датасет
 # 1. Загрузка и предобработка данных
 @st.cache_data(show_spinner=True)
 def load_data():
-    token = st.secrets["HF_TOKEN"]
+    token = st.secrets["HF_TOKEN"]  # берём токен из Streamlit Secrets
     file_path = hf_hub_download(
         repo_id="PbI4a/Case_7",
         filename="clean_reviews.csv",
@@ -31,6 +31,7 @@ def load_data():
         use_auth_token=token
     )
     df = pd.read_csv(file_path)
+
     # Преобработка
     df['review_date'] = pd.to_datetime(df['review_date'], errors='coerce')
     df['year_month'] = df['review_date'].dt.to_period('M').astype(str)
